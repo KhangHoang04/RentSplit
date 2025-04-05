@@ -56,6 +56,13 @@ const authOptions = {
       }
       return token; // Return the modified token
     },
+    async redirect({ url, baseUrl }) {
+      // Check if the user is coming from a valid redirect URL
+      if (url === baseUrl || url.startsWith(baseUrl)) {
+        return `${baseUrl}/dashboard`; // Redirect to /dashboard after sign-in
+      }
+      return url; // Default behavior
+    },
   },
 };
 

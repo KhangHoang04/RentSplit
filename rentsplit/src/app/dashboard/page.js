@@ -1,3 +1,4 @@
+'use client';
 import { getUserSession } from "@/core/session";
 
 export default async function dashboard() {
