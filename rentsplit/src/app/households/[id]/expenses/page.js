@@ -1,12 +1,12 @@
 import { getUserSession } from "@/core/session";
-import RentSplitDashboard from "@/components/RentSplitDashboard";
+import ManageExpensesPage from "@/components/expenses/ExpensesPage";
 
-export default async function DashboardPage() {
+export default async function ExpensesPage() {
   const user = await getUserSession();
 
   return (
     <main className="p-4 bg-gray-50 min-h-screen">
-      <RentSplitDashboard user={user}/>
+      <ManageExpensesPage user={user}/>
     </main>
   );
 }

@@ -13,9 +13,10 @@ const HouseholdSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  createdBy : {
-    type: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    required: true
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true, // optional but recommended
   },
   createdAt: {
     type: Date,

@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Plus, Bell, CreditCard, User, Calendar, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Sidebar from "@/components/ui/sidebar";
 
 const budgetData = [
   { name: "Rent", value: 1200 },
@@ -52,7 +53,7 @@ const getStatusBadge = (status) => {
   }
 };
 
-const RentSplitDashboard = () => {
+const RentSplitDashboard = ({user}) => {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -62,6 +63,8 @@ const RentSplitDashboard = () => {
     .reduce((sum, member) => sum + member.owes, 0);
 
   return (
+    <div className="flex">
+      <Sidebar user={user} />
     <div className="p-6 max-w-6xl mx-auto">
       <header className="mb-8">
         <h1 className="text-3xl font-bold mb-2 text-black">RentSplit Dashboard</h1>
@@ -284,6 +287,7 @@ const RentSplitDashboard = () => {
       <Button className="fixed bottom-6 right-6 rounded-full w-12 h-12 p-0 shadow-lg bg-blue-600 hover:bg-blue-700 md:hidden flex items-center justify-center">
         <Plus size={24} />
       </Button>
+    </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { UserModel } from "@/core/models/User";
 import { session } from "@/core/session";
 
 // Define your NextAuth configuration
-const authOptions = {
+export const authOptions = {
   session: {
     strategy: "jwt", // Use JWT for session management
   },
@@ -20,27 +20,39 @@ const authOptions = {
     async signIn({ user, account, profile }) {
       if (account.provider === "google") {
         const { name, email, image, id } = user;
+    
         try {
-          await connectToDB(); // Connect to the DB (assuming it's MongoDB)
-
+          await connectToDB();
           let userExists = await UserModel.findOne({ email });
-
-          // If user does not exist, create a new one
-          if (!userExists) {
+    
+          if (userExists) {
+            // ✅ If status is 'invited', upgrade them to 'active' and update info
+            if (userExists.status === "invited") {
+              userExists.username = name;
+              userExists.google_id = id;
+              userExists.profileImage = image;
+              userExists.status = "active";
+              await userExists.save();
+            }
+          } else {
+            // ✅ New user: create normally
             userExists = await UserModel.create({
               username: name,
               email,
               google_id: id,
               profileImage: image,
+              status: "active", // set status explicitly
             });
           }
-          return true; // Successful sign-in
+    
+          return true;
         } catch (error) {
           console.error("Error in sign-in callback:", error);
-          return false; // Return false in case of an error
+          return false;
         }
       }
-      return true; // For other providers, continue with default behavior
+    
+      return true;
     },
     session,
     // JWT callback to store additional data in the JWT (e.g., user ID)
