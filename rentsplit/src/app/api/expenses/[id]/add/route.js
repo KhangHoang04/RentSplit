@@ -16,7 +16,7 @@ export async function POST(req, { params }) {
   const sessionUser = await UserModel.findOne({ email: session.user.email });
   if (!sessionUser) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-  const { amount, category, paid_by, date } = await req.json(); // make sure to use paid_by from client
+  const { amount, category, paid_by, date, due_date } = await req.json(); // make sure to use paid_by from client
   const householdId = params.id;
 
   if (!amount || !category || !paid_by) {
@@ -40,7 +40,8 @@ export async function POST(req, { params }) {
       amount,
       category,
       paid_by,
-      date
+      date,
+      due_date
     });
 
     const splits = await Promise.all(
@@ -49,7 +50,10 @@ export async function POST(req, { params }) {
           expense_id: expense._id,
           user_id: userId,
           amount: share,
-          date
+          date,
+          due_date: due_date,
+          household_id: household._id,
+          paid_to: paid_by
         })
       )
     );

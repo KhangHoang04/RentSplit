@@ -1,4 +1,4 @@
-// app/api/user/info/route.js
+// app/api/user/route.js
 
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";

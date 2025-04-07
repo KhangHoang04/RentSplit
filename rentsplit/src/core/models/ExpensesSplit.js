@@ -15,10 +15,29 @@ const ExpenseSplitSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  paid_to: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  household_id : {
+    type: mongoose.Schema.Types.ObjectId,
+        ref: "Household",
+        required: true,
+  },
   date: {
     type: Date,
     default: Date.now,
-  }
+  },
+  due_date: {
+    type: Date,
+    default: Date.now,
+  },
+  status: {
+    type: String,
+    enum: ["Pending", "Paid"],
+    default: "Pending",
+  },
 });
 
 const ExpenseSplit = mongoose.models.ExpenseSplit || mongoose.model("ExpenseSplit", ExpenseSplitSchema);

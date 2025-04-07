@@ -12,9 +12,9 @@ export async function POST(req, { params }) {
   if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const { id: householdId, expenseId } = params;
-  const { amount, category, paid_by, date } = await req.json();
+  const { amount, category, paid_by, date, due_date } = await req.json();
 
-  if (!amount || !category || !paid_by || !date) {
+  if (!amount || !category || !paid_by || !date ) {
     return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
   }
 
@@ -28,6 +28,7 @@ export async function POST(req, { params }) {
     expense.amount = amount;
     expense.category = category;
     expense.date = date;
+    expense.due_date = due_date;
     await expense.save();
 
     await ExpenseSplit.deleteMany({ expense_id: expense._id });
@@ -43,7 +44,8 @@ export async function POST(req, { params }) {
           expense_id: expense._id,
           user_id: uid,
           amount: share,
-          date: new Date(date)
+          date: new Date(date),
+          due_date: new Date(due_date)
         })
       )
     );

@@ -23,6 +23,10 @@ const ExpenseSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  due_date: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 const Expense = mongoose.models.Expense || mongoose.model("Expense", ExpenseSchema);

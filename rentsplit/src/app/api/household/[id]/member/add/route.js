@@ -6,6 +6,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectToDB from "@/core/db/mongodb";
 import Household from "@/core/models/Household";
 import { UserModel } from "@/core/models/User";
+import sgMail from "@sendgrid/mail";
+
 
 export async function POST(req, { params }) {
   await connectToDB();
@@ -38,7 +40,7 @@ export async function POST(req, { params }) {
         to: email,
         from: "allyhoang24@gmail.com",
         subject: `${sessionUser.username} has invited you to Rentsplit!`,
-        text: `${sessionUser.username} invited you to join ${name} on RentSplit. Visit http://localhost:3000 to join.`,
+        text: `${sessionUser.username} invited you to join ${householdName} on RentSplit. Visit http://localhost:3000 to join.`,
         html: html,
         };
       

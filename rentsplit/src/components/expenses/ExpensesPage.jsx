@@ -19,6 +19,7 @@ export default function ManageExpensesPage() {
   const [loading, setLoading] = useState(false);
   const [editingExpenseId, setEditingExpenseId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [dueDate, setDueDate] = useState("");
 
   const fetchUser = async () => {
     try {
@@ -74,6 +75,7 @@ export default function ManageExpensesPage() {
           category: category === "Other" ? customCategory : category,
           paid_by: paidBy,
           date: period,
+          due_date: dueDate,
         }),
       });
       const data = await res.json();
@@ -111,6 +113,7 @@ export default function ManageExpensesPage() {
     setCategory(expense.category);
     setPaidBy(expense.paid_by);
     setPeriod(expense.period || "");
+    setDueDate(expense.dueDate || "");
   };
 
   const resetForm = () => {
@@ -120,6 +123,7 @@ export default function ManageExpensesPage() {
     setCustomCategory("");
     setPaidBy("");
     setPeriod("");
+    setDueDate("");
   };
 
   return (
@@ -189,6 +193,15 @@ export default function ManageExpensesPage() {
                   </option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium">Due Date</label>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="border p-2 rounded-md w-full"
+              />
             </div>
             <div className="flex gap-2">
               <Button onClick={handleCreateOrUpdateExpense} disabled={loading}>
