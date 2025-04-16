@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ const HouseholdPage = ({ user }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [removingMemberId, setRemovingMemberId] = useState(null);
 
   const handleAddMember = async () => {
     if (!newMemberEmail) return;
@@ -48,9 +48,11 @@ const HouseholdPage = ({ user }) => {
     }
   };
   
-  const handleRemoveMember = async (memberEmail) => {
+  const handleRemoveMember = async (memberEmail, memberId) => {
     const confirmed = confirm("Are you sure you want to remove this member?");
     if (!confirmed) return;
+    
+    setRemovingMemberId(memberId);
     try {
       const res = await fetch(`/api/household/${activeHousehold._id}/member/remove`, {
         method: "POST",
@@ -107,7 +109,7 @@ const HouseholdPage = ({ user }) => {
         <header className="mb-8 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-black">Your Households</h1>
           <Link href="/households/create">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               <Plus size={16} className="mr-2" />
               Create Household
             </Button>
@@ -115,9 +117,9 @@ const HouseholdPage = ({ user }) => {
         </header>
 
         {loading ? (
-          <p className="text-gray-500">Loading households...</p>
+          <p className="text-black">Loading households...</p>
         ) : households.length === 0 ? (
-          <p className="text-gray-500">You're not part of any households yet.</p>
+          <p className="text-black">You're not part of any households yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {households.map((house) => (
@@ -127,13 +129,13 @@ const HouseholdPage = ({ user }) => {
                 className="cursor-pointer hover:shadow-lg transition"
               >
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
+                  <CardTitle className="flex items-center justify-between text-black">
                     <span>{house.name}</span>
                     <Users size={20} />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-500">{house.members.length} member(s)</p>
+                  <p className="text-sm text-black">{house.members.length} member(s)</p>
                 </CardContent>
               </Card>
             ))}
@@ -144,9 +146,9 @@ const HouseholdPage = ({ user }) => {
           <div className="mt-10">
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl flex justify-between items-center">
+                <CardTitle className="text-xl flex justify-between items-center text-black">
                   <span>Manage Members – {activeHousehold.name}</span>
-                  <Button variant="outline" onClick={() => setActiveHousehold(null)}>Close</Button>
+                  <Button variant="outline" onClick={() => setActiveHousehold(null)} className="text-black">Close</Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -158,65 +160,79 @@ const HouseholdPage = ({ user }) => {
                         className="flex justify-between items-center border rounded-md p-3"
                       >
                         <div>
-                          <p className="font-medium">{member.email}</p>
-                          <Badge variant="outline">
+                          <p className="font-medium text-black">{member.email}</p>
+                          <Badge variant="outline" className="text-black">
                             {activeHousehold.admin === member._id ? "Owner" : "Member"}
                           </Badge>
                         </div>
-                        {activeHousehold.admin._id === currentUser._id && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleRemoveMember(member.email)}
-                        >
-                          <UserMinus size={16} className="mr-1" />
-                          Remove
-                        </Button>
-                      )}
-                      </div>
-                    ))}
-                    {activeHousehold.admin._id === currentUser._id && (
-                    <div className="mt-4 space-y-2">
-                      {!showEmailInput ? (
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => setShowEmailInput(true)}
-                        >
-                          <UserPlus size={16} className="mr-1" />
-                          Add Member
-                        </Button>
-                      ) : (
-                        <div className="flex gap-2 items-center">
-                          <input
-                            type="email"
-                            placeholder="member@example.com"
-                            value={newMemberEmail}
-                            onChange={(e) => setNewMemberEmail(e.target.value)}
-                            className="border p-2 rounded-md w-full max-w-sm text-sm"
-                          />
-                          <Button size="sm" onClick={handleAddMember} disabled={loading}>
-                            {loading ? "Adding..." : "Submit"}
-                          </Button>
+                        {activeHousehold.admin && currentUser && 
+                          activeHousehold.admin._id === currentUser._id && (
                           <Button
                             size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setShowEmailInput(false);
-                              setNewMemberEmail("");
-                            }}
+                            variant="destructive"
+                            onClick={() => handleRemoveMember(member.email, member._id)}
+                            disabled={removingMemberId === member._id}
+                            className="text-white"
                           >
-                            Cancel
+                            <UserMinus size={16} className="mr-1" />
+                            {removingMemberId === member._id ? "Removing..." : "Remove"}
                           </Button>
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    ))}
+
+                    {activeHousehold.admin && currentUser && 
+                      activeHousehold.admin._id === currentUser._id && (
+                      <div className="mt-4 space-y-2">
+                        {!showEmailInput ? (
+                          <Button
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={() => setShowEmailInput(true)}
+                          >
+                            <UserPlus size={16} className="mr-1" />
+                            Add Member
+                          </Button>
+                        ) : (
+                          <div className="flex gap-2 items-center">
+                            <input
+                              type="email"
+                              placeholder="member@example.com"
+                              value={newMemberEmail}
+                              onChange={(e) => setNewMemberEmail(e.target.value)}
+                              className="border p-2 rounded-md w-full max-w-sm text-sm text-black"
+                            />
+                            <Button 
+                              size="sm" 
+                              onClick={handleAddMember} 
+                              disabled={loading}
+                              className="text-white"
+                            >
+                              {loading ? "Adding..." : "Submit"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setShowEmailInput(false);
+                                setNewMemberEmail("");
+                              }}
+                              className="text-black"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="mt-4">
+                      <Link href={`/households/${activeHousehold._id}/expenses`}>
+                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                          Manage Expenses
+                        </Button>
+                      </Link>
                     </div>
-                  )}
-                  <Link href={`/households/${activeHousehold._id}/expenses`}>
-                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                    Manage Expenses
-                  </Button>
-                  </Link>
                   </div>
                 </ScrollArea>
               </CardContent>
