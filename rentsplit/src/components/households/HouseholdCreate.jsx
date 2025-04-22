@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "../ui/lable";
 import { Users, Upload, Loader2, X } from "lucide-react";
-import { CldUploadButton } from "next-cloudinary";
+import { CldUploadWidget, CldUploadButton } from "next-cloudinary";
 import Sidebar from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -25,7 +25,6 @@ const CreateHouseholdPage = ({ user }) => {
     if (trimmed && !members.includes(trimmed)) {
       setMembers([...members, trimmed]);
     }
-    console.log(members)
     setMemberInput("");
   };
 
@@ -73,7 +72,9 @@ const CreateHouseholdPage = ({ user }) => {
       <div className="flex-1 ml-64 p-6">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Create Household</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              Create Household
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -90,31 +91,30 @@ const CreateHouseholdPage = ({ user }) => {
               <div className="mb-4">
                 <Label htmlFor="image">Group Photo</Label>
                 <div className="mt-1 flex flex-col items-start">
-                    <CldUploadButton
+                  <CldUploadButton
                     options={{ maxFiles: 1 }}
                     folder="group_images"
                     uploadPreset="q8iforrb"
                     onSuccess={(result) =>
-                        setGroupPhoto(result?.info?.secure_url || "")
+                      setGroupPhoto(result?.info?.secure_url || "")
                     }
                     onFailure={(error) =>
-                        console.error("Cloudinary upload error:", error)
+                      console.error("Cloudinary upload error:", error)
                     }
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2"
-                    >
+                  >
                     Upload Image
-                    </CldUploadButton>
+                  </CldUploadButton>
 
-                    {groupPhoto && (
+                  {groupPhoto && (
                     <img
-                        src={groupPhoto}
-                        alt="Group"
-                        className="mt-2 w-32 h-32 rounded-md object-cover border"
+                      src={groupPhoto}
+                      alt="Group"
+                      className="mt-2 w-32 h-32 rounded-md object-cover border"
                     />
-                    )}
+                  )}
                 </div>
-                </div>
-
+              </div>
 
               <div>
                 <Label htmlFor="member">Add Members by Email</Label>
@@ -127,7 +127,11 @@ const CreateHouseholdPage = ({ user }) => {
                     onChange={(e) => setMemberInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                   />
-                  <Button type="button" variant="outline" onClick={handleAddMember}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddMember}
+                  >
                     <Users size={16} className="mr-2" />
                     Add
                   </Button>

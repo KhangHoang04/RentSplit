@@ -14,7 +14,6 @@ import Image from "next/image";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Contacts", icon: Users, href: "/contacts" },
   { label: "Households", icon: Home, href: "/households" },
   { label: "Activity", icon: Activity, href: "/activity" },
 ];

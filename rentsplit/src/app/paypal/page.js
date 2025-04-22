@@ -1,38 +1,37 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function PayPalSuccessPage() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get('token');
-  const [status, setStatus] = useState('processing');
+  const orderId = searchParams.get("token");
+  const [status, setStatus] = useState("processing");
 
   useEffect(() => {
     const captureOrder = async () => {
       if (!orderId) {
-        setStatus('error');
+        setStatus("error");
         return;
       }
 
       try {
         const res = await fetch(`/api/paypal/capture-order/${orderId}`, {
-          method: 'POST',
+          method: "POST",
         });
 
         const data = await res.json();
 
         if (res.ok) {
-          console.log('✅ Payment captured:', data);
-          setStatus('success');
-          window.location.href = 'http://localhost:3000/dashboard';
+          setStatus("success");
+          window.location.href = "http://localhost:3000/dashboard";
         } else {
-          console.error('❌ Capture failed:', data);
-          setStatus('error');
+          console.error("❌ Capture failed:", data);
+          setStatus("error");
         }
       } catch (err) {
-        console.error('❌ Network error:', err);
-        setStatus('error');
+        console.error("❌ Network error:", err);
+        setStatus("error");
       }
     };
 
@@ -40,9 +39,9 @@ export default function PayPalSuccessPage() {
   }, [orderId]);
 
   useEffect(() => {
-    if (status === 'error') {
+    if (status === "error") {
       const timeout = setTimeout(() => {
-        window.location.href = 'http://localhost:3000/dashboard';
+        window.location.href = "http://localhost:3000/dashboard";
       }, 5000); // ⏱️ 5 seconds before redirect
 
       return () => clearTimeout(timeout); // Cleanup if component unmounts early
@@ -51,8 +50,10 @@ export default function PayPalSuccessPage() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      {status === 'processing' && <p className="text-lg font-medium">Processing your payment...</p>}
-      {status === 'error' && (
+      {status === "processing" && (
+        <p className="text-lg font-medium">Processing your payment...</p>
+      )}
+      {status === "error" && (
         <p className="text-lg font-semibold text-red-600">
           Failed to process payment. Redirecting...
         </p>

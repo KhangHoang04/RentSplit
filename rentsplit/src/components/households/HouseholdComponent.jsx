@@ -160,7 +160,7 @@ const HouseholdPage = ({ user }) => {
                         className="flex justify-between items-center border rounded-md p-3"
                       >
                         <div>
-                          <p className="font-medium text-black">{member.email}</p>
+                          <p className="font-medium text-black">{member.username ? member.username : member.email}</p>
                           <Badge variant="outline" className="text-black">
                             {activeHousehold.admin === member._id ? "Owner" : "Member"}
                           </Badge>
